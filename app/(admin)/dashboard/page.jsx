@@ -8,7 +8,7 @@ const Dashboard = () => {
   return (
     <div>
       {user.username ? (
-        <div>Welcome to Fekki, {user.username}</div>
+        <div>Welcome to Fekki..., {user.username}</div>
       ) : (
         <div>Loading...</div> 
       )}
