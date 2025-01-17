@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from 'next/navigation'; 
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const AddUserForm = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const userId = searchParams.get('id');
     const token = localStorage.getItem("token");
+    const [errors, setErrors] = useState({});
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -107,9 +108,17 @@ const AddUserForm = () => {
 
             if (response.ok) {
                 console.log("User updated successfully");
-                router.push('/dashboard/settings'); 
+                router.push('/dashboard/settings');
             } else {
-                console.log("Error updating user");
+                const errorData = await response.json();
+                const newErrors = {};
+                if (errorData.message.includes("Email ID")) {
+                    newErrors.emailId = "Email ID is already in use by another customer.";
+                }
+                if (errorData.message.includes("Mobile number")) {
+                    newErrors.phoneNumber = "Mobile number is already in use by another customer.";
+                }
+                setErrors(newErrors);
             }
         } catch (error) {
             console.error("Error:", error);
@@ -220,6 +229,8 @@ const AddUserForm = () => {
                                             className="w-full border border-gray-300 p-3"
                                         />
                                     </div>
+                                    {errors.emailId && <p className="text-red-500 text-sm mt-1">{errors.emailId}</p>}
+
                                 </div>
                                 <div>
                                     <div className="mb-4">
@@ -232,6 +243,9 @@ const AddUserForm = () => {
                                             className="w-full border border-gray-300 rounded-lg p-3"
                                         />
                                     </div>
+                                    {errors.phoneNumber && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -332,8 +346,8 @@ const AddUserForm = () => {
                             </div>
                         </div>
 
-                        
-                        
+
+
                     </div>
 
                     <div className="col-span-full text-center mt-4">

@@ -27,12 +27,22 @@ const AddUserForm = () => {
         isTeamHead: false,
     });
 
+
+    const [errors, setErrors] = useState({
+        email: "",
+        phoneNumber: "",
+    });
+
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData({
             ...formData,
             [name]: type === "checkbox" ? checked : value,
         });
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: "" });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -59,7 +69,15 @@ const AddUserForm = () => {
                 router.push("/dashboard/settings");
             } else {
                 const error = await response.json();
-                alert(`Error: ${error.message}`);
+
+                if (error.message === "Email already exists.") {
+                    setErrors({ ...errors, email: "This email is already registered." });
+                } else if (error.message === "Phone number already exists.") {
+                    setErrors({ ...errors, phoneNumber: "This phone number is already registered." });
+                } else {
+                    alert(`Error: ${error.message}`);
+                }
+
             }
         } catch (err) {
             console.error("Error while creating user:", err);
@@ -192,6 +210,8 @@ const AddUserForm = () => {
                                             required
                                         />
                                     </div>
+                                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+
                                 </div>
                                 {/* Right Side Fields */}
                                 <div>
@@ -207,6 +227,8 @@ const AddUserForm = () => {
                                             required
                                         />
                                     </div>
+                                    {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
+
                                 </div>
                             </div>
                         </div>
