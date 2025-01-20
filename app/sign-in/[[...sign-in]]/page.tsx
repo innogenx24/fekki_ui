@@ -13,7 +13,6 @@ export default function SignInPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // Clear any previous errors
     setError('')
 
     // Send POST request to login API
